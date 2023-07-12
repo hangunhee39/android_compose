@@ -33,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -51,25 +53,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-//immutable 객체 여서 내용이 바뀐다고 ui가 안바뀜
-//안에 객체를 mutable 하게 할 순 있지만 이 방버이 더 편리
-data class ToDoData(
-    val key: Int,
-    val text: String,
-    val done: Boolean = false
-)
+class TodoViewModel : ViewModel() {
+    //remember은 못 쓴다 , by로 value 바로 밭기는 가능
+    //remember는 composable 함수의 생명주기에 맞추기 때문에 viewModel에서 못쓴다
+    val text = mutableStateOf("")
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Greeting() {
-    val (text, setText) = remember { mutableStateOf("") }
-    val toDoList = remember { mutableStateListOf<ToDoData>() }
+    val toDoList = mutableStateListOf<ToDoData>()
 
     val onSubmit: (String) -> Unit = {
         val key = (toDoList.lastOrNull()?.key ?: 0) + 1
         toDoList.add(ToDoData(key, it))
-        setText("")
+        text.value = ""
     }
 
     val onToggle: (Int, Boolean) -> Unit = { key, checked ->
@@ -87,22 +81,38 @@ fun Greeting() {
 
     val onEdit: (Int, String) -> Unit = { key, text ->
         val i = toDoList.indexOfFirst { it.key == key }
-        toDoList[i] = toDoList[i].copy( text = text)
+        toDoList[i] = toDoList[i].copy(text = text)
     }
+}
 
+//immutable 객체 여서 내용이 바뀐다고 ui가 안바뀜
+//안에 객체를 mutable 하게 할 순 있지만 이 방버이 더 편리
+data class ToDoData(
+    val key: Int,
+    val text: String,
+    val done: Boolean = false
+)
+
+//import androidx.lifecycle.viewmodel.compose.viewModel 를 import
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Greeting(viewModel: TodoViewModel = viewModel()) {
 
     Scaffold {
         Column {
-            ToDoInput(text, setText, onSubmit)
+            ToDoInput(viewModel.text.value, {
+                viewModel.text.value = it
+            }, viewModel.onSubmit)
 
             LazyColumn {
                 //key 를 설정해줘야 compose가 잘 작동한다
-                items(toDoList , key = {it.key}) {
+                items(viewModel.toDoList, key = { it.key }) {
                     ToDo(
                         toDoData = it,
-                        onToggle = onToggle,
-                        onDelete = onDelete,
-                        onEdit = onEdit
+                        onToggle = viewModel.onToggle,
+                        onDelete = viewModel.onDelete,
+                        onEdit = viewModel.onEdit
                     )
                 }
             }
@@ -160,7 +170,7 @@ fun ToDo(
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
 
-       Crossfade(targetState = isEditing) {
+        Crossfade(targetState = isEditing) {
             when (it) {
                 false -> {
                     Row(
@@ -205,7 +215,7 @@ fun ToDo(
                         }
 
                         OutlinedTextField(
-                            value =  newText,
+                            value = newText,
                             onValueChange = setNewText,
                             modifier = Modifier.weight(1f)
                         )
