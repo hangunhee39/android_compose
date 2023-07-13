@@ -25,7 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
@@ -56,32 +58,55 @@ class MainActivity : ComponentActivity() {
 class TodoViewModel : ViewModel() {
     //remember은 못 쓴다 , by로 value 바로 밭기는 가능
     //remember는 composable 함수의 생명주기에 맞추기 때문에 viewModel에서 못쓴다
-    val text = mutableStateOf("")
+    //val text = mutableStateOf("")
 
-    val toDoList = mutableStateListOf<ToDoData>()
+    //observeAsState로 연결
+    private val _text = MutableLiveData("")
+    val text : LiveData<String> = _text     //외부에서 직접 바꿀수 없게
 
-    val onSubmit: (String) -> Unit = {
-        val key = (toDoList.lastOrNull()?.key ?: 0) + 1
-        toDoList.add(ToDoData(key, it))
-        text.value = ""
+    val setText: (String) -> Unit = {
+        _text.value = it
     }
 
+    //mutableStateLiseOf - 추가, 삭제, 대입 -> ui가 갱신,
+    //      각 항복의 필드가 바뀌었을 때 -> 갱신 안되는 문제 (immutable 한 객체를 넣으면 해결)
+    //LiveData<List<x>>.observeAsState() - List가 통채로 다른 List로 바뀌었을 때만 State가 갱신 (비추)
+
+//    val toDoList = mutableStateListOf<ToDoData>()
+    private val _rawToDoList = mutableListOf<ToDoData>()
+    private val _toDoList = MutableLiveData<List<ToDoData>>()
+    val toDoList: LiveData<List<ToDoData>> = _toDoList
+
+    val onSubmit: (String) -> Unit = {
+        val key = (_rawToDoList.lastOrNull()?.key ?: 0) + 1
+        _rawToDoList.add(ToDoData(key, it))
+        _toDoList.value = _rawToDoList.toMutableList()
+        _text.value = ""
+    }
+
+    //List 만드는 3가지 방법 (결과는 같음)
     val onToggle: (Int, Boolean) -> Unit = { key, checked ->
-        val i = toDoList.indexOfFirst {
+        val i = _rawToDoList.indexOfFirst {
             it.key == key
         }
-        toDoList[i] = toDoList[i].copy(done = checked)
+        _rawToDoList[i] = _rawToDoList[i].copy(done = checked)
         //그냥 done 만 바꾸면 ui가 새로고침 안됨 (todo 자체를 바꿈)
+        _toDoList.value =  ArrayList(_rawToDoList)
     }
 
     val onDelete: (Int) -> Unit = { key ->
-        val i = toDoList.indexOfFirst { it.key == key }
-        toDoList.removeAt(i)
+        val i = _rawToDoList.indexOfFirst { it.key == key }
+        _rawToDoList.removeAt(i)
+        _toDoList.value =  _rawToDoList.toMutableList()
     }
 
     val onEdit: (Int, String) -> Unit = { key, text ->
-        val i = toDoList.indexOfFirst { it.key == key }
-        toDoList[i] = toDoList[i].copy(text = text)
+        val i = _rawToDoList.indexOfFirst { it.key == key }
+        _rawToDoList[i] = _rawToDoList[i].copy(text = text)
+        _toDoList.value = mutableListOf<ToDoData>().also {
+            it.addAll(_rawToDoList)
+            //shallow copy 문제 생길 수도..
+        }
     }
 }
 
@@ -101,13 +126,15 @@ fun Greeting(viewModel: TodoViewModel = viewModel()) {
 
     Scaffold {
         Column {
-            ToDoInput(viewModel.text.value, {
-                viewModel.text.value = it
-            }, viewModel.onSubmit)
-
+            ToDoInput(
+                viewModel.text.observeAsState("").value,
+                viewModel.setText,
+                viewModel.onSubmit
+            )
+            val items =viewModel.toDoList.observeAsState(emptyList()).value
             LazyColumn {
                 //key 를 설정해줘야 compose가 잘 작동한다
-                items(viewModel.toDoList, key = { it.key }) {
+                items(items = items, key = { it.key }) {
                     ToDo(
                         toDoData = it,
                         onToggle = viewModel.onToggle,
@@ -185,8 +212,8 @@ fun ToDo(
                         Text(text = "완료")
                         Checkbox(
                             checked = toDoData.done,
-                            onCheckedChange = {
-                                onToggle(toDoData.key, it)
+                            onCheckedChange = {b->
+                                onToggle(toDoData.key, b)
                             })
                         Button(onClick = {
                             isEditing = true
