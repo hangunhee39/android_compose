@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+//MVI
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     private val getFeedCategoryUseCase: GetFeedCategoryUseCase

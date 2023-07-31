@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -53,10 +54,10 @@ val COMMON_HORIZONTAL_PADDING = Paddings.medium
 fun FeedScreen(
     feedStateHolder: State<FeedState>,
     input: IFeedViewModelInput,
-    //buttonColor: State<Color>,
-    //changeAppColor: () -> Unit
+    buttonColor: State<Color>,
+    changeAppColor: () -> Unit
 ) {
-    //val btnColor by remember { buttonColor }
+    val btnColor by remember { buttonColor }
 
     Scaffold(
         topBar = {
@@ -73,13 +74,14 @@ fun FeedScreen(
                         style = MaterialTheme.typography.headlineLarge
                     )
                 },
-//                actions = {
-//                    AppBarMenu(
-//                        btnColor = btnColor,
-//                        changeAppColor = changeAppColor,
-//                        input = input
-//                    )
-//                }
+                colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.primary),
+                actions = {
+                    AppBarMenu(
+                        btnColor = btnColor,
+                        changeAppColor = changeAppColor,
+                        input = input
+                    )
+                }
             )
         }
     ) {
