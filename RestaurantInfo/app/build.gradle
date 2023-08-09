@@ -1,0 +1,30 @@
+plugins {
+    id 'com.android.application'
+}
+
+apply from: "../base-build.gradle"
+
+android {
+    flavorDimensions "theme"
+
+    productFlavors {
+        red {
+            isDefault = true
+            dimension "theme"
+            applicationId "kr.co.fastcampus.part4plus.restaurantapp.red"
+        }
+        blue {
+            dimension "theme"
+            applicationId "kr.co.fastcampus.part4plus.restaurantapp.blue"
+        }
+    }
+}
+
+dependencies {
+    implementation(project(path: ':features:detail'))
+    implementation(project(path: ':features:feed'))
+    implementation(project(path: ':libraries:network'))
+    implementation(project(path: ':libraries:network-contract'))
+    implementation(project(path: ':libraries:storage'))
+    implementation(project(path: ':libraries:storage-contract'))
+}

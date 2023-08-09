@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/feed_fragment">
+
+    <fragment
+        android:id="@+id/feed_fragment"
+        android:name="kr.co.fastcampus.part4plus.restaurantapp.features.feed.FeedFragment"
+        android:label="Feed">
+
+        <deepLink app:uri="App://Feed" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detail_fragment"
+        android:name="kr.co.fastcampus.part4plus.restaurantapp.features.detail.DetailFragment"
+        android:label="Detail">
+        <argument
+            android:name="id"
+            app:argType="integer" />
+
+        <deepLink app:uri="App://Detail/{id}" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/rating_fragment"
+        android:name="kr.co.fastcampus.part4plus.restaurantapp.features.detail.dialog.RatingDialogFragment"
+        android:label="Rating">
+        <argument
+            android:name="restaurantName"
+            app:argType="string" />
+        <argument
+            android:name="rating"
+            app:argType="float" />
+
+        <deepLink app:uri="App://Rating/{restaurantName}/{rating}" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/map_dialog_fragment"
+        android:name="kr.co.fastcampus.part4plus.restaurantapp.features.detail.dialog.ShowMapDialogFragment"
+        android:label="Map">
+        <argument
+            android:name="url"
+            app:argType="string" />
+
+        <deepLink app:uri="App://Map/{url}" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/info_fragment"
+        android:name="kr.co.fastcampus.part4plus.restaurantapp.features.feed.dialog.InfoDialogFragment"
+        android:label="Notice">
+
+        <deepLink app:uri="App://Notice" />
+    </dialog>
+</navigation>
