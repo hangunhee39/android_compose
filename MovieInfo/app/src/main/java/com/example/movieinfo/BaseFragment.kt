@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.movieinfo.features.common.viewmodel.ThemeViewModel
 
+//theme 색을 적용하기 위해서
 open class BaseFragment : Fragment() {
     protected val themeViewModel: ThemeViewModel by activityViewModels()
 }

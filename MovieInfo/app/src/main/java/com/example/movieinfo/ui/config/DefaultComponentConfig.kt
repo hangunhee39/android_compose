@@ -3,7 +3,7 @@ package com.example.movieinfo.ui.config
 import com.example.movieinfo.ui.theme.Shapes
 import com.example.movieinfo.ui.theme.color.ColorSet
 
-//theme 에서 요구하는 정보
+//theme(전환) 에서 요구하는 정보
 object DefaultComponentConfig {
     val RED_THEME = ComponentConfig(
         colors = ColorSet.Red,
