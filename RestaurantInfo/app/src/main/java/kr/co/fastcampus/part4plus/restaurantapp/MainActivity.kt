@@ -10,6 +10,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    // 현재 무슨 태마인지 저장 (다중 테마)
     @Inject
     lateinit var storage: IStorage
 
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         saveAppTheme()
     }
 
+    //다중테마
     private fun saveAppTheme() {
         storage.save(
             StorageKeys.APP_THEME,

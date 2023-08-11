@@ -38,6 +38,7 @@ class RatingDialogFragment : BaseDialogFragment() {
                     themeState = themeViewModel.themeState.collectAsState()
                 ) {
                     DialogPopup.Rating(
+                        //arguments 딥링크(nav)
                         restaurantName = arguments?.getString("restaurantName") ?: "",
                         rating = arguments?.getFloat("rating") ?: 0.0f,
                         buttons = listOf(

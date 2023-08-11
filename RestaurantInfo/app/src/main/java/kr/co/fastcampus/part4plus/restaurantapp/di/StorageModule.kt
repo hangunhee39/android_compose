@@ -12,6 +12,7 @@ import kr.co.fastcampus.part4plus.restaurantapp.libraries.storage.prefs.StorageP
 import kr.co.fastcampus.part4plus.restaurantapp.libraries.storage_contract.IStorage
 import javax.inject.Singleton
 
+//library에 DI를 App에 DI 가져오기
 @Module
 @InstallIn(SingletonComponent::class)
 class StorageModule {

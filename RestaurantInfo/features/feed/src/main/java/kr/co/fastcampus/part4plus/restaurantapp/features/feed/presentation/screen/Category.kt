@@ -13,7 +13,8 @@ import kr.co.fastcampus.part4plus.restaurantapp.core.entity.CategoryEntity
 import kr.co.fastcampus.part4plus.restaurantapp.features.feed.presentation.input.IFeedViewModelInput
 import kr.co.fastcampus.part4plus.restaurantapp.ui_components.theme.Paddings
 
-
+//ui-component -> features/feed 로 이동
+//why? ui-component 는 하위모듈이기 때문에 core와 features 사용을 못하니깐
 @Composable
 fun CategoryRow(
     categoryEntity: CategoryEntity,

@@ -24,6 +24,8 @@ import kr.co.fastcampus.part4plus.restaurantapp.ui_components.theme.Paddings
 private val CARD_WIDTH = 200.dp
 private val ICON_SIZE = 12.dp
 
+//ui-component -> features/feed 로 이동
+//why? ui-component 는 하위모듈이기 때문에 core와 features 사용을 못하니깐
 @Composable
 fun FeedItem(
     feedItem: RestaurantFeedItemEntity,

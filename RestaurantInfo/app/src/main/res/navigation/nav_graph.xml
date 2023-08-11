@@ -4,6 +4,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@+id/feed_fragment">
 
+    <!-- 멀티 모듈에선 action 대신 deepLink 사용!(딥링크)  -->
     <fragment
         android:id="@+id/feed_fragment"
         android:name="kr.co.fastcampus.part4plus.restaurantapp.features.feed.FeedFragment"

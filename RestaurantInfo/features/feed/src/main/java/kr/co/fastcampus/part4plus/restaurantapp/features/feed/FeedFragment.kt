@@ -55,12 +55,14 @@ class FeedFragment : BaseFragment() {
                 viewModel.output.feedUiEffect.collectLatest {
                     when (it) {
                         is FeedUiEffect.OpenRestaurantDetail -> {
+                            //딥링크(nav)
                             navController.safeNavigate(
                                 "App://Detail/${it.id}"
                             )
                         }
 
                         is FeedUiEffect.OpenInfoDialog -> {
+                            //딥링크(nav)
                             navController.safeNavigate(
                                 "App://Notice"
                             )

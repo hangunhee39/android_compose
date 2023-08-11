@@ -12,6 +12,7 @@ import kr.co.fastcampus.part4plus.restaurantapp.ui_components.config.DefaultComp
 import kr.co.fastcampus.part4plus.restaurantapp.ui_components.theme.color.ColorSet
 import javax.inject.Inject
 
+//다중 테마 설정하기
 @HiltViewModel
 class ThemeViewModel @Inject constructor(
     private val storage: IStorage
